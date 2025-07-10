@@ -1,22 +1,9 @@
-"""
-Safety Helmet Detection Web Application
-======================================
-
-A Streamlit web application for detecting safety helmets in images using YOLOv8.
-This app allows users to upload images and get real-time helmet detection results.
-
-Developed by five students during the Intel AI4MFG Internship Program.
-
-Team: Arbaz Ansari, Ajaykumar Mahato, Shivam Mishra, Rain Mohammad Atik, Sukesh Singh
-Date: 2025
-"""
-
 import streamlit as st
 import numpy as np
 from PIL import Image
 import os
-import importlib
-import subprocess
+import cv2
+from ultralytics import YOLO
 
 # Set page config
 st.set_page_config(
@@ -26,46 +13,27 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Load YOLO model with dynamic install & import
+# Load YOLO model
 @st.cache_resource
 def load_model():
-    try:
-        try:
-            YOLO = importlib.import_module("ultralytics").YOLO
-            cv2 = importlib.import_module("cv2")
-        except ModuleNotFoundError:
-            with st.spinner("📦 Installing dependencies (YOLO, OpenCV, etc)..."):
-                subprocess.run([
-                    "pip", "install", "ultralytics==8.1.24",
-                    "torch", "torchvision",
-                    "opencv-python-headless", "pillow", "numpy"
-                ], check=True)
-            YOLO = importlib.import_module("ultralytics").YOLO
-            cv2 = importlib.import_module("cv2")
+    model_paths = [
+        "runs/detect/train4/weights/best.pt",
+        "runs/detect/train3/weights/best.pt",
+        "runs/detect/train2/weights/best.pt",
+        "runs/detect/train/weights/best.pt",
+        "yolov8n.pt"
+    ]
 
-        # Check multiple possible model paths
-        model_paths = [
-            "runs/detect/train4/weights/best.pt",
-            "runs/detect/train3/weights/best.pt",
-            "runs/detect/train2/weights/best.pt",
-            "runs/detect/train/weights/best.pt",
-            "yolov8n.pt"
-        ]
+    for path in model_paths:
+        if os.path.exists(path):
+            st.success(f"✅ Model loaded from: {path}")
+            return YOLO(path)
 
-        for path in model_paths:
-            if os.path.exists(path):
-                st.success(f"✅ Model loaded from: {path}")
-                return YOLO(path), cv2
+    st.error("❌ No model file found in known paths.")
+    return None
 
-        st.error("❌ No model file found in known paths.")
-        return None, None
-
-    except Exception as e:
-        st.error(f"❌ Error loading model: {str(e)}")
-        return None, None
-
-# Load the model
-model, cv2 = load_model()
+# Load model
+model = load_model()
 
 st.title("🪖 Helmet Compliance Detection App")
 st.write("Upload an image below to detect helmets.")
