@@ -12,8 +12,6 @@ Date: 2025
 """
 
 import streamlit as st
-
-
 import cv2
 import numpy as np
 from PIL import Image
@@ -32,13 +30,26 @@ st.set_page_config(
 @st.cache_resource
 def load_model():
     try:
+        import subprocess
+
+        try:
+            from ultralytics import YOLO
+        except ModuleNotFoundError:
+            with st.spinner("📦 Installing YOLOv8 & dependencies..."):
+                subprocess.run([
+                    "pip", "install", "ultralytics==8.1.24",
+                    "torch", "torchvision",
+                    "opencv-python-headless", "pillow", "numpy"
+                ], check=True)
+            from ultralytics import YOLO
+
         # Try different possible model paths
         model_paths = [
-            "runs/detect/train4/weights/best.pt",  # Your trained model
+            "runs/detect/train4/weights/best.pt",
             "runs/detect/train3/weights/best.pt",
             "runs/detect/train2/weights/best.pt",
             "runs/detect/train/weights/best.pt",
-            "yolov8n.pt"  # Fallback to default model
+            "yolov8n.pt"
         ]
         
         for path in model_paths:
