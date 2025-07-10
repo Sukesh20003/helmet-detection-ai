@@ -12,10 +12,8 @@ Date: 2025
 """
 
 import streamlit as st
-import cv2
 import numpy as np
 from PIL import Image
-import tempfile
 import os
 
 # Set page config
@@ -32,8 +30,10 @@ def load_model():
     try:
         import subprocess
 
+        # Install dependencies if missing
         try:
             from ultralytics import YOLO
+            import cv2
         except ModuleNotFoundError:
             with st.spinner("📦 Installing YOLOv8 & dependencies..."):
                 subprocess.run([
@@ -42,6 +42,7 @@ def load_model():
                     "opencv-python-headless", "pillow", "numpy"
                 ], check=True)
             from ultralytics import YOLO
+            import cv2
 
         # Try different possible model paths
         model_paths = [
@@ -55,16 +56,16 @@ def load_model():
         for path in model_paths:
             if os.path.exists(path):
                 st.success(f"✅ Model loaded from: {path}")
-                return YOLO(path)
+                return YOLO(path), cv2
         
         st.error("❌ No model file found. Please check if the model exists in the expected locations.")
-        return None
+        return None, None
     except Exception as e:
         st.error(f"❌ Error loading model: {str(e)}")
-        return None
+        return None, None
 
 # Load model
-model = load_model()
+model, cv2 = load_model()
 
 st.title("🪖 Helmet Compliance Detection App")
 st.write("Upload an image below to detect helmets.")
