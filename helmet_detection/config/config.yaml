@@ -1,0 +1,65 @@
+# Safety Helmet Detection Configuration
+# ====================================
+# Developed by five students during the Intel AI4MFG Internship Program
+# Team: Arbaz Ansari, Ajaykumar Mahato, Shivam Mishra, Rain Mohammad Atik, Sukesh Singh
+# Date: 2025
+
+# Model Configuration
+model:
+  confidence_threshold: 0.5
+  iou_threshold: 0.45
+  input_size: 640
+  device: "auto"  # "cpu", "cuda", or "auto"
+
+# Training Configuration
+training:
+  epochs: 100
+  batch_size: 16
+  patience: 20
+  learning_rate: 0.01
+  weight_decay: 0.0005
+
+# Dataset Configuration
+dataset:
+  train_ratio: 0.8
+  validation_ratio: 0.2
+  classes:
+    - helmet
+    - head
+  image_formats:
+    - ".jpg"
+    - ".jpeg"
+    - ".png"
+    - ".bmp"
+    - ".tiff"
+
+# Application Configuration
+app:
+  title: "Safety Helmet Detection"
+  page_icon: "🪖"
+  layout: "wide"
+  max_file_size: 200  # MB
+
+# Model Paths (relative to project root)
+paths:
+  model_search_paths:
+    - "runs/detect/train/weights/best.pt"
+    - "runs/detect/train2/weights/best.pt"
+    - "runs/detect/train3/weights/best.pt"
+    - "runs/detect/train4/weights/best.pt"
+    - "runs/detect/train5/weights/best.pt"
+    - "archive/runs/detect/train/weights/best.pt"
+    - "archive/runs/detect/train2/weights/best.pt"
+    - "archive/runs/detect/train3/weights/best.pt"
+    - "archive/runs/detect/train4/weights/best.pt"
+    - "archive/runs/detect/train5/weights/best.pt"
+  
+  data:
+    images: "images"
+    labels: "labels"
+    annotations: "annotations"
+  
+  output:
+    runs: "runs"
+    models: "models"
+    logs: "logs" 
