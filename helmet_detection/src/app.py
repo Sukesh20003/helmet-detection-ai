@@ -13,14 +13,6 @@ Date: 2025
 
 import streamlit as st
 
-# Handle missing ultralytics dependency by installing at runtime
-try:
-    from ultralytics import YOLO
-except ModuleNotFoundError:
-    import os
-    import subprocess
-    subprocess.run(["pip", "install", "ultralytics==8.1.24", "torch", "torchvision", "opencv-python-headless", "pillow", "numpy"])
-    from ultralytics import YOLO
 
 import cv2
 import numpy as np
